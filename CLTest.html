@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en" class="k-webkit k-webkit93 k-webkit99" style="width:2400px;height:1400px">
+<head>
+    <link rel="stylesheet" href="/kendoui/styles/kendo.common.min.css">
+    <link rel="stylesheet" href="/kendoui/styles/kendo.default.min.css">
+    <link rel="stylesheet" href="/kendoui/styles/kendo.bootstrap.min.css">
+    <script src="/kendoui/js/jquery.min.js"></script>
+    <script src="/kendoui/js/jszip.min.js"></script>
+    <script src="/kendoui/js/kendo.all.min.js"></script>
+    <script>
+var jq112 = jQuery.noConflict();
+    </script>
+    <script id="waiJsonFilters"></script>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="/kendoui/styles/kendo.default.mobile.min.css">
+    <script type="text/javascript" src="/Y[wai]/wai.js"></script>
+    <link id="bizCss" href="/css/thema1.css" rel="stylesheet" type="text/css">
+    <link href="/css/default.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="/biz/bizCommon.js"></script>
+    <script src="/js/shortcut.js"></script>
+    <script type="text/javascript">
+var pageInfo =null;
+var SVC_TYPE = {  "INQUIRY"  :"inquiry"};
+function bizPageOnLoad( )
+{
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = today.getFullYear();
+    today = yyyy + '' + mm + '' + dd;
+    dateedit5.value  = today;
+    dateedit6.value = today;
+}
+// TODO Kendo
+jq112(document).ready(function () {
+initController();
+});
+// TODO Controller
+function initController(params) {
+createGrid01();
+}
+function calc(array, i1, i2) {
+let result = 0;
+array.slice(i1, (i2 + 1)).forEach((element) => {
+    result += element;
+});
+return Math.floor(result * 100) / 100;
+}
+// TODO Create Grid01
+function createGrid01(){
+jq112("#grid01").kendoGrid({
+sortable: true,
+resizable: true
+,scrollable: true
+,editable: false
+,selectable : "multiple, row"
+,height: 446
+,reorderable: true
+,columns: [
+    {title:"Date" , template: "<div class='row-number'></div>", width: "60px"},
+    {field: "cixNm", title: "OP NO", width: "100px"},
+    {field: "cixNo", title: "OP Name", width: "100px" },
+    {field: "comNm", title: "Rank", width: "150px" },
+    {field: "refNo", title: "Duty", width: "100px" },
+    {field: "seqNo", title: "Status", width: "100px" },
+    {field: "paymentSts", title: "Work Hour", width: "100px" },
+    {field: "applyDt", title: "Basic", width: "150px"},
+    {field: "ptpDt", title: "Overtime", width: "150px" },
+    {field: "applyOpNo", title: "Type", width: "150px" },
+    ]
+,change: onGridCellClick
+,dataBound: function(e) {
+    let rows = this.items();
+    $(rows).each(function () {
+        let index = $(this).index() + 1;
+        let rowLabel = $(this).find(".row-number");
+        $(rowLabel).html(index);
+    });
+}
+,pageable: {
+    pageSize: 5000,
+    info:true,
+    previousNext: false,
+    numeric: false,
+    messages: {
+        display: "{2} Data",
+        empty: "0 Data",}
+}
+,excelExport: function (e){
+    e.workbook.fileName =
+    kendo.toString(new Date(), "ddMMyyyy") + "_Collection_Account_And_Class.xlsx";
+    var sheet = e.workbook.sheets[0];
+    for (var i = 0; i < sheet.rows.length; i++) {
+    for (var ci = 0; ci < sheet.rows[i].cells.length; ci++) {
+        var cell = sheet.rows[i].cells[ci];
+        // add borders
+        cell.borderTop = { color: "white", size: 1 };
+        cell.borderRight = { color: "white", size: 1 };
+        cell.borderBottom = { color: "white", size: 1 };
+        cell.borderLeft = { color: "white", size: 1 };
+        // align cells top
+        if (cell.rowSpan > 1) {
+        cell.verticalAlign = "top";
+        cell.vAlign = "center";
+        cell.hAlign = "center";
+        } else {
+        cell.vAlign = "center";
+        cell.hAlign = "center";
+        }
+    }
+    }
+}
+});
+}
+//     function onGridCellClick(obj)
+// {
+//     var selectedRows = this.select();
+//     dataItem = this.dataItem(selectedRows[0]);
+//     dtlsBascDt              .value = dataItem.bascDt  ;
+//     dtlsCixNo               .value = dataItem.cixNo   ;
+//     dtlsCixNm               .value = dataItem.cixNm   ;
+//     dtlsRefNo               .value = dataItem.refNo   ;
+//     dtlsSeqNo               .value = dataItem.seqNo   ;
+//     dtlsApplyDt				.value = dataItem.applyDt ;
+//     dtlsPtpDt				.value = dataItem.ptpDt   ;
+//     dtlsPtpAmt				.value = dataItem.ptpAmt  ;
+//     dtlsApplyOpNo			.value = dataItem.applyOpNo ;
+//     dtlsBpYn				.value = dataItem.bpYn	    ;
+//     dtlsPaymentSts			.value = dataItem.paymentSts ;
+//     dtlsRpayDt				.value = dataItem.rpayDt	;
+//     dtlsRpayChnl			.value = dataItem.rpayChnl ;
+//     dtlsPaidDlqyPrnAmt		.value = dataItem.paidDlqyPrnAmt ;
+//     dtlsPaidDlqyIntAmt		.value = dataItem.paidDlqyIntAmt ;
+//     dtlsPaidDlqyPrnAmtFee	.value = dataItem.paidDlqyPrnAmtFee;
+//     dtlsPaidDlqyIntAmtFee	.value = dataItem.paidDlqyIntAmtFee ;
+//     dtlsPaidDlqyAmt      	.value = dataItem.ptpDlqyAmt;
+//     dtlsPaidDlqyRpayAmt		.value = dataItem.paidDlqyRpayAmt	;
+//     diffAmt.value =  dtlsPtpAmt.value  - dtlsPaidDlqyRpayAmt.value;
+// }
+function fActSearch(pId)
+{
+    console.log("fActSearch pId   " , pId   );
+    var inpData  = {};
+    if(pId == "search")
+    {
+        inpData.trxType = SVC_TYPE.INQUIRY;
+        inpData.bascDt1 = dateedit5.value;
+        inpData.bascDt2 = dateedit6.value;
+        inpData.refNo   = refNo.value;
+        inpData.cixNo   = cixNo.value;
+        inpData.cixNm   = cixNm.value;
+        ajaxTran.svcTx("CLO0600A.SVC"
+                ,inpData
+                ,function (data){
+                console.log("SUCCEdrgtetegyteeggtegtSS", data.grid1);
+                if(data.grid1.length == 0) {alert("Data not found!"); return;}
+                jq112("#grid01").data("kendoGrid").dataSource.data(data.grid1);
+                }
+                , function (data) {
+                            console.log("ERROR");
+                            alert("ERROR");
+                        }
+            );
+    }
+    else if(pId == "SAVE")
+    {
+        inpData.trxType = SVC_TYPE.SAVE;
+        ajaxTran.svcTx("CLO0600A.SVC"
+                    , inpData
+                    , function (data)
+                        {
+                            console.log("SUCC///////", data.grid01);
+                            JSON.setToElem(data);
+                            Main.showInfoDialog('CL06','Outbound Upload', "Data Saved");
+                        }
+                    , function (data)
+                        {
+                            console.log("ERROR");
+                            alert("ERROR");
+                        }
+        );
+    }
+}
+function checkDt()
+{
+    var limit = new Date();
+    var dd = String(limit.getDate()).padStart(2, '0');
+    var mm = String(limit.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = limit.getFullYear();
+    limit = yyyy + '' + mm + '' + dd;
+    if(bascDt.value > limit )
+    {
+        alert("Please choose only today or past date !");
+        setTimeout(function(){ bascDt.value = limit }, 500);
+    }
+}
+    </script>
+</head>
+<body style="zoom: 1;">
+    <label class="Dtitle" lang="" id="mTitle" style="left: 8px; top: 8px; position: absolute; width: 171px; height: 18px;">Collection</label>
+    <div id="outside" style="border: 1px solid rgb(18, 118, 168); position: absolute; left: 6px; top: 24px; width: 1170px; height: 540px;">
+        <button onclick="fActSearch('search')" id="btnInquiry" style="position: absolute; left: 1040px; top: 5px; width: 116px; height: 33px;">Inquiry</button>
+        <div style="position: absolute; left: 8px; top: 48px; width: 1147px; height: 474px; border: 1px solid rgb(234, 234, 234);">
+            <div id="grid01" class="gridKendo" data-role="grid" data-bind="source:dataList01"></div>
+        </div>
+        <!-- <grid id="grid01" dsoName="grid01" oncellclick="onGridCellClick(this);" ></grid> -->
+        <!-- <div style="position: absolute; left: 14px; top: 538px; width: 1148px; height: 206px; background-color: rgb(223, 231, 234);"> -->
+        
+    </div>
+</body>
+</html>
